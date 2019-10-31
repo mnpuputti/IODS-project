@@ -1,5 +1,6 @@
 ---
 title: "IODS course project"
+author: "Maija Nuppunen-Puputti"
 output:
   html_document:
     theme: cosmo
