@@ -1,4 +1,11 @@
 
-# About the project
+# About the IODS project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you can use R Markdown syntax.*
+*I heard about this course in the MBDP Metagenomics course last spring. 
+I wish to develop my __R__ skills further and learn more about __RMarkdown__, version control and using __GitHub__.*     
+  
+  ***  
+    
+1 [__Link to my GitHub repository__](https://github.com/mnpuputti/IODS-project)      
+  
+2 or:  https://github.com/mnpuputti/IODS-project
