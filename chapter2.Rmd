@@ -1,7 +1,103 @@
-# Insert chapter 2 title here
+# IODS week 2. Regression and model validation: Data analysis 
 
-*Describe the work you have done this week and summarize your learning.*
+*This week we practised data wrangling and data visualization for linear models in DataCamp with packages __dplyr and ggplot2__. 
+We practised making scripts for data wrangling in R with __"Learning2014"__ dataset. We used this dataset, modifed the data to match IODS-course needs, and we will call that part of the dataset __"Students2014"__.   Dataset is available [__here.__](http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt)*
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+###Bringing data into R
+
+*Explore the __"Students2014"__ dataset. This dataset contains part of the "the international survey of Approaches to Learning"*
+```{r}
+#Read data "students2014" into R from .csv-file created in the data wrangling part of week2.
+students2014 <- read.csv("~/Documents/MAIJA/R_IODS/IODS-project/data/learning2014.csv", row.names = 1)
+```
+
+```{r}
+#Check dimensions and structure of the dataset.
+dim(students2014)
+str(students2014)
+
+
+```
+*There are 166 observations and seven different variables including: gender, age, attitude, deep, stra, surf and points. There are three different types of learning technique questions:* **"deep" = deep learning**,**"stra" = strategic learning** *and* **"surf" = surface learning**. *In addition there were categories for global attitude towards statistics* **"attitude"** *,  exam points* **"points"** *and also the* **"gender"** *of the survey participants.*
+
+***
+
+Load the libraries needed in data visualization
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(GGally)
+```
+Check the data through visualizations
+```{r}
+###Check graphical overview with basic plot of pairwise correlations
+p1 <- plot(students2014, main = "Graphical overview of the students2014 dataset")
+
+##Check graphical overview with finer, more informative visual presentation of pairwise correlation plot, with ggpairs
+ggpairs(students2014, mapping = aes(col = gender, alpha=0.3), lower = list(combo = wrap("facethist", bins = 20)))
+
+```
+
+###Summaries of the variables
+```{r}
+###Check summaries of the different variables available 
+summary(students2014)
+
+#or summaries could be also individually picked e.g.
+summary(students2014$gender)
+```
+*From* *the graphical overview and summary we can see that there are more female participants in the gender category.* *Female participants are younger than male participants.* *Exam point means are on the similar level for both male and female participants. Male participants score better for the attitude points.* *There are no major correlations between any categories for either female or male participants.*  
+*Highest* *correlation with the "point" variable is observed with the variable "attitude" and "stra" and negative correlation* *with "surf" variable".* *The mean age is 25.51 with range from 17.00 to 55.00 years. The mean observed exam points is 22.72 with* *minimum being 7.00 and maximum points being 33.00. Deep learning mean is 3.68, strategic learning mean is 3.121 and surface learning techniques mean is 2.787.*  
+
+***
+
+###Regression model
+```{r}
+
+#Create a regression model with three explanatory variables identified from pairwise correlation plot:stra + age + attitude,
+model1 <- lm(points ~ stra + age + attitude, data = students2014)
+
+#Check the summary of the regression model and plot the results
+set.seed(123)
+summary(model1)
+```
+*Summary shows that only "attitude" of the tested explanatory variables could be considered statistically significant based on the p-values. Attitude has the most significant impact on the points with positive p.value 4.72e-09, while stra is showing p-value 0.0621 and age 0.0981. Attitude shows estimate of 0.34, while estimate for stra is 1.0. For age variable the estimate is negative. We can continue with the "attitude" variable and re-fit the model without the non-significant variables.*
+
+
+```{r}
+#Re-fit the model with significant variable "attitude"
+model2 <- lm(points ~ attitude, data = students2014)
+
+#Check the summary of the regression model and plot the results
+set.seed(123)
+summary(model2)
+```
+*Now we can evaluate, whether the model and the data fit.*
+*The R-squared values tell us how close to the fitted (multiple) regression line our data is located. Multiple R-squared is 0.1906. This means that our model explains ~ 19 % of the variability around its mean.*
+*Estimates* *for the parametre for the model is 0.35255 for the attitude with standard error of 0.05674.*
+
+```{r}
+#Check how does the model looks with "points and "attitude"
+qplot(attitude, points, data = students2014) + geom_smooth(method = "lm")
+
+```
+
+```{r}
+#Draw and explore the diagnostic plots
+par(mfrow = c(2,2))
+plot(model2, which = c(1,2,5))
+```
+
+
+*Residuals are the errors in modelling the target variable. We want to minimize the modelling errors.* __*Residuals vs fitted plot*__: *There cannot be detected major spreading of the values. However, few outliers can be detected when fitted values increase.* __*Normal QQ-plot*__ *explores the normal distribution potential of the errors. The data fits the normal distribution reasonably well, except the few outliers at the lower quantiles. We can say that the errors are normally distributed in this model.* __*Residuals vs Leverage plot*__ *shows that there are no clear individual values that impact the model.*
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
